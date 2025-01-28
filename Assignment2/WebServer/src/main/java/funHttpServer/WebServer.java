@@ -208,10 +208,13 @@ class WebServer {
           // marker for if user input is valid
           boolean userInput = true;
 
+          Integer num1 = null;
+          Integer num2 = null;
+
           try {
             // extract required fields from parameters as strings
-            Integer num1 = Integer.parseInt(query_pairs.get("num1"));
-            Integer num2 = Integer.parseInt(query_pairs.get("num2"));
+            num1 = Integer.parseInt(query_pairs.get("num1"));
+            num2 = Integer.parseInt(query_pairs.get("num2"));
           } catch (NumberFormatException e) {
             userInput = false;
           }
@@ -252,7 +255,7 @@ class WebServer {
 
           JSONArray reposArray = new JSONArray(json);
 
-          for (int i = 0; i < repos.length(); i++) {
+          for (int i = 0; i < reposArray.length(); i++) {
             JSONObject repo = reposArray.getJSONObject(i);
             String name = repo.getString("full_name");
             String id = repo.getString("id");
@@ -292,7 +295,7 @@ class WebServer {
           String string1 = query_pairs.get("string1");
           String string2 = query_pairs.get("string2");
 
-          if (string1 == null || strin2 == null) {
+          if (string1 == null || string2 == null) {
             builder.append("HTTP/1.1 406 OK\n");
             builder.append("Content-Type: text/html; charset=utf-8\n");
             builder.append("\n");
