@@ -8,6 +8,8 @@ You can also do some other simple GET requests:
 4) /multiply?num1=3&num2=4 multiplies the two inputs and responses with the result
 5) /github?query=users/amehlhase316/repos (or other GitHub repo owners) will lead to receiving
    JSON which will for now only be printed in the console. See the todo below
+6) /joke?animal1=cow&animal2=dog takes the two inputs and responds with a joke containing chosen words
+7) /concantenate?string1=Hello there&string2=my old friend, takes two strings given and concantenates them
 
 The reading of the request is done "manually", meaning no library that helps making things a 
 little easier is used. This is done so you see exactly how to pars the request and 
@@ -25,6 +27,8 @@ import java.util.Random;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.nio.charset.Charset;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 class WebServer {
   public static void main(String args[]) {
@@ -201,18 +205,33 @@ class WebServer {
           // extract path parameters
           query_pairs = splitQuery(request.replace("multiply?", ""));
 
-          // extract required fields from parameters
-          Integer num1 = Integer.parseInt(query_pairs.get("num1"));
-          Integer num2 = Integer.parseInt(query_pairs.get("num2"));
+          // marker for if user input is valid
+          boolean userInput = true;
 
-          // do math
-          Integer result = num1 * num2;
+          try {
+            // extract required fields from parameters as strings
+            Integer num1 = Integer.parseInt(query_pairs.get("num1"));
+            Integer num2 = Integer.parseInt(query_pairs.get("num2"));
+          } catch (NumberFormatException e) {
+            userInput = false;
+          }
 
-          // Generate response
-          builder.append("HTTP/1.1 200 OK\n");
-          builder.append("Content-Type: text/html; charset=utf-8\n");
-          builder.append("\n");
-          builder.append("Result is: " + result);
+          if (userInput == false) {
+            // Generate response
+            builder.append("HTTP/1.1 406 Bad Request\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("User input is not a valid integer");
+          } else {
+            // do math
+            Integer result = num1 * num2;
+
+            // Generate response
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Result is: " + result);
+          }
 
           // TODO: Include error handling here with a correct error code and
           // a response that makes sense
@@ -229,7 +248,23 @@ class WebServer {
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
           query_pairs = splitQuery(request.replace("github?", ""));
           String json = fetchURL("https://api.github.com/" + query_pairs.get("query"));
-          System.out.println(json);
+          //System.out.println(json);
+
+          JSONArray reposArray = new JSONArray(json);
+
+          for (int i = 0; i < repos.length(); i++) {
+            JSONObject repo = reposArray.getJSONObject(i);
+            String name = repo.getString("full_name");
+            String id = repo.getString("id");
+            String login = repo.getString("login");
+
+            builder.append("Name: ").append(name)
+                    .append("\nID: ").append(id)
+                    .append("\nLogin: ").append(login)
+                    .append("\n");
+          }
+
+          System.out.println(response.toString());
 
           builder.append("HTTP/1.1 200 OK\n");
           builder.append("Content-Type: text/html; charset=utf-8\n");
@@ -238,7 +273,39 @@ class WebServer {
           // TODO: Parse the JSON returned by your fetch and create an appropriate
           // response based on what the assignment document asks for
 
-        } else {
+        } else if (request.contains("joke?")){
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          query_pairs = splitQuery(request.replace("joke?", ""));
+
+          String animal1 = query_pairs.get("animal1");
+          String animal2 = query_pairs.get("animal2");
+
+          builder.append("What did the " + animal1 + " say to the " + animal2 + "?\n");
+          builder.append("......\n");
+          builder.append("I don't know, probably an animal noise\n");
+          builder.append("XD!!!\n")
+
+        }else if (request.contains("concatenate?")){
+          Map<String, String> query_pairs = new LinkedHashMap<String, String>();
+          query_pairs = splitQuery(request.replace("concantenate?", ""));
+
+          String string1 = query_pairs.get("string1");
+          String string2 = query_pairs.get("string2");
+
+          if (string1 == null || strin2 == null) {
+            builder.append("HTTP/1.1 406 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Two valid strings have not been entered.");
+          } else {
+            builder.append("Concantenated result: " + string1 + " " + string2 + "\n");
+
+            builder.append("HTTP/1.1 200 OK\n");
+            builder.append("Content-Type: text/html; charset=utf-8\n");
+            builder.append("\n");
+            builder.append("Strings succesfully concantenated.");
+          }
+        }else {
           // if the request is not recognized at all
 
           builder.append("HTTP/1.1 400 Bad Request\n");
