@@ -283,7 +283,7 @@ class WebServer {
           builder.append("What did the " + animal1 + " say to the " + animal2 + "?\n");
           builder.append("......\n");
           builder.append("I don't know, probably an animal noise\n");
-          builder.append("XD!!!\n")
+          builder.append("XD!!!\n");
 
         }else if (request.contains("concatenate?")){
           Map<String, String> query_pairs = new LinkedHashMap<String, String>();
