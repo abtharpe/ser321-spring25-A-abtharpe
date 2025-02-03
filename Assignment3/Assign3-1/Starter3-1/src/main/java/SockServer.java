@@ -88,6 +88,10 @@ public class SockServer {
             res = add(req);
           } else if (req.getString("type").equals("addmany")) {
             res = addmany(req);
+          } else if (req.getString("type").equals("charcount")) {
+            res = charCount(req);
+          } else if (req.getString("type").equals("inventory")) {
+            res = inventory(req);
           } else {
             res = wrongType(req);
           }
@@ -163,12 +167,48 @@ public class SockServer {
 
   // implement me in assignment 3
   static JSONObject inventory(JSONObject req) {
-    return new JSONObject();
+    System.out.println("Inventory request: " + req.toString());
+    JSONObject res = null;
+
+    if (req.getBoolean("view")) {
+
+    }
+    return res;
   }
 
   // implement me in assignment 3
   static JSONObject charCount(JSONObject req) {
-    return new JSONObject();
+    System.out.println("Charcount request: " + req.toString());
+    //This test the given req to see if it has a given valid key and creating a new JSONObject to hold our data
+    JSONObject res = testField(req, "count");
+    if (res.getBoolean("ok")) {
+      //This test if the value in "count" is not a string
+      if (!req.get("count").getClass().getName().equals("java.lang.String")){
+        res.put("ok", false);
+        res.put("message", "Field count needs to be of type: String");
+        return res;
+      } else {
+        //Here we extract the data into a char array
+        char[] charArray = req.getString("count").toCharArray();
+        int count = 0;
+
+        if (res.getBoolean("findchar")) {
+          for (int i = 0; i < charArray.length; i++) {
+            if (charArray[i] == req.getString("find").charAt(0)) {
+              count++;
+            }
+          }
+          res.put("type", "charcount");
+          res.put("result", count);
+          count = 0;
+        } else {
+          count = req.getString("count").length();
+          res.put("result", count);
+          count = 0;
+        }
+      }
+    }
+    return res;
   }
 
   // handles the simple addmany request

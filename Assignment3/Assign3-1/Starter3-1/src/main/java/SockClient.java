@@ -41,7 +41,7 @@ class SockClient {
         // You can assume the user put in a correct input, you do not need to handle errors here
         // You can assume the user inputs a String when asked and an int when asked. So you do not have to handle user input checking
         JSONObject json = new JSONObject(); // request object
-        switch(choice) {
+        switch (choice) {
           case 0:
             System.out.println("Choose quit. Thank you for using our services. Goodbye!");
             requesting = false;
@@ -74,9 +74,55 @@ class SockClient {
             json.put("type", "addmany");
             json.put("nums", array);
             break;
-            // TODO: add the other cases
+          case 4:
+            System.out.println("Choose charcount, what string do you want to send?");
+            String charMessage = scanner.nextLine();
+            json.put("type", "charcount");
+            json.put("count", charMessage);
+            System.out.println("Do you want to count a specific charact? i.e. 'a' in bananas would output 3.");
+            System.out.println("Select 1 for yes, or 2 for no.");
+            String charChoice = scanner.nextLine();
+            if (charChoice.equals("1")) {
+              json.put("findchar", true);
+              System.out.println("Please enter the character you wish to count: ");
+              String ch = scanner.nextLine();
+              json.put("find", ch);
+            } else if (charChoice.equals("2")) {
+              json.put("findchar", false);
+            } else {
+              System.out.println("Why you break me?!):");
+              System.exit(0);
+            }
+            break;
+          case 5:
+            System.out.println("Choose inventory, what option would you like?");
+            json.put("type", "inventory");
+            System.out.println("1 - add");
+            System.out.println("2 - view");
+            System.out.println("3 - buy");
+            int inventoryChoice = scanner.nextInt();
+            if (inventoryChoice == 1) {
+              json.put("task", "add");
+              System.out.println("Please name the item you would like to inventory: ");
+              String s = scanner.nextLine();
+              System.out.println("What is the quantity of this item?");
+              int x = scanner.nextInt();
+              json.put("productname", s);
+              json.put("quantity", x);
+            } else if (inventoryChoice == 2) {
+              json.put("task", "view");
+            } else if (inventoryChoice == 3) {
+              json.put("task", "buy");
+              System.out.println("What is the name of the item you would like to buy?");
+              String s = scanner.nextLine();
+              System.out.println("How many would you like to buy?");
+              int x = scanner.nextInt();
+              json.put("productname", s);
+              json.put("quantity", x);
+            }
+            break;
         }
-        if(!requesting) {
+        if (!requesting) {
           continue;
         }
 
@@ -91,9 +137,20 @@ class SockClient {
         String i = (String) in.readUTF();
         JSONObject res = new JSONObject(i);
         System.out.println("Got response: " + res);
-        if (res.getBoolean("ok")){
+        if (res.getBoolean("ok")) {
           if (res.getString("type").equals("echo")) {
             System.out.println(res.getString("echo"));
+          } else if (res.getString("type").equals("inventory")) {
+            if (res.getString("task").equals("view")) {
+              JSONArray inventory = res.getJSONArray("inventory");
+
+              for (int j = 0; j < inventory.length(); j++) {
+                JSONObject object = inventory.getJSONObject(j);
+                String product = object.getString("product");
+                int quantity = object.getInt("quantity");
+                System.out.println("Product: " + product + "Quantity: " + quantity);
+              }
+            }
           } else {
             System.out.println(res.getInt("result"));
           }
