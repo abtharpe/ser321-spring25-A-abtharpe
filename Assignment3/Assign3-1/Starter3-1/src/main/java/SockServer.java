@@ -168,12 +168,27 @@ public class SockServer {
   // implement me in assignment 3
   static JSONObject inventory(JSONObject req) {
     System.out.println("Inventory request: " + req.toString());
-    JSONObject res = null;
+    JSONObject fin = new JSONObject();
+    JSONArray list = new JSONArray();
+    fin.put("type", "inventory");
+    fin.put("ok", true);
 
-    if (req.getBoolean("view")) {
+    if (req.getString("task").equals("add")) {
+      fin.put("task", "add");
+      String s = req.getString("productname");
+      int x = Integer.parseInt(req.getString("quantity"));
+      JSONObject res = new JSONObject();
+      res.put("productname", s);
+      res.put("quantity", x);
+      list.put(res);
+    } else if (req.getString("task").equals("view")) {
+      fin.put("task", "view");
+      fin.put("inventory", list);
+    } else if (req.getString("task").equals("buy")) {
+      fin.put("task", "buy");
 
     }
-    return res;
+    return fin;
   }
 
   // implement me in assignment 3
@@ -191,14 +206,14 @@ public class SockServer {
         //Here we extract the data into a char array
         char[] charArray = req.getString("count").toCharArray();
         int count = 0;
+        res.put("type", "charcount");
 
-        if (res.getBoolean("findchar")) {
+        if (req.getBoolean("findchar")) {
           for (int i = 0; i < charArray.length; i++) {
             if (charArray[i] == req.getString("find").charAt(0)) {
               count++;
             }
           }
-          res.put("type", "charcount");
           res.put("result", count);
           count = 0;
         } else {

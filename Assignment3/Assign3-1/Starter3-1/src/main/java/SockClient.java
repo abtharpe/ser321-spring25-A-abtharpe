@@ -106,7 +106,7 @@ class SockClient {
               System.out.println("Please name the item you would like to inventory: ");
               String s = scanner.nextLine();
               System.out.println("What is the quantity of this item?");
-              int x = scanner.nextInt();
+              String x = scanner.nextLine();
               json.put("productname", s);
               json.put("quantity", x);
             } else if (inventoryChoice == 2) {
@@ -116,7 +116,7 @@ class SockClient {
               System.out.println("What is the name of the item you would like to buy?");
               String s = scanner.nextLine();
               System.out.println("How many would you like to buy?");
-              int x = scanner.nextInt();
+              String x = scanner.nextLine();
               json.put("productname", s);
               json.put("quantity", x);
             }
