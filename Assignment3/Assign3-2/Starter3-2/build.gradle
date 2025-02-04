@@ -21,6 +21,14 @@ task runClient(type: JavaExec) {
   main = 'Assign32starter.ClientGui'
   standardInput = System.in
   args "1"
+
+  if (project.hasProperty('port')) {
+    systemProperty 'port', project.port
+  }
+
+  if (project.hasProperty('host')) {
+    systemProperty 'host', project.host
+  }
 }
 
 task runServer(type: JavaExec) {
@@ -30,4 +38,8 @@ task runServer(type: JavaExec) {
   classpath = sourceSets.main.runtimeClasspath
 
   main = 'Assign32starter.SockServer'
+
+  if (project.hasProperty('port')) {
+    systemProperty 'port', project.port
+  }
 }

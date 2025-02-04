@@ -24,8 +24,23 @@ public class SockServer {
 		Socket sock;
 		try {
 			
-			//opening the socket here, just hard coded since this is just a bas example
-			ServerSocket serv = new ServerSocket(8888); // TODO, should not be hardcoded
+			//opening the socket here, just hard coded since this is just a base example
+			ServerSocket serv; // TODO, should not be hardcoded
+			String portString = System.getProperty("port");
+			int port = 8888;
+
+			if (portString != null) {
+				try {
+					port = Integer.parseInt(portString);
+					serv = new ServerSocket(port);
+				} catch (NumberFormatException e) {
+					System.out.println("Invalid port number, using default port: " + port);
+					serv = new ServerSocket(port);
+				}
+			} else {
+				serv = new ServerSocket(port);
+			}
+
 			System.out.println("Server ready for connetion");
 
 			// placeholder for the person who wants to play a game

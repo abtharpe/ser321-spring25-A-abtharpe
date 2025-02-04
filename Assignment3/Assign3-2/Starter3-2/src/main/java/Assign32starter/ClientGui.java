@@ -49,13 +49,14 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 
 	// TODO: SHOULD NOT BE HARDCODED change to spec
 	String host = "localhost";
-	int port = 9000;
+	int port = 8888;
 
 	/**
 	 * Construct dialog
 	 * @throws IOException 
 	 */
 	public ClientGui(String host, int port) throws IOException {
+
 		this.host = host; 
 		this.port = port; 
 	
@@ -233,8 +234,22 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 
 
 		try {
+			String hostString = System.getProperty("host");
 			String host = "localhost";
+			String portString = System.getProperty("port");
 			int port = 8888;
+
+			if (portString != null) {
+				try {
+					port = Integer.parseInt(portString);
+				} catch (NumberFormatException e) {
+					System.out.println("Invalid port number, using default port: " + port);
+				}
+			}
+
+			if (hostString != null) {
+				host = hostString;
+			}
 
 
 			ClientGui main = new ClientGui(host, port);
