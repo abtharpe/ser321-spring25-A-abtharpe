@@ -23,9 +23,8 @@ public class SockServer {
 	public static void main (String args[]) {
 		Socket sock;
 		try {
-			
-			//opening the socket here, just hard coded since this is just a base example
-			ServerSocket serv; // TODO, should not be hardcoded
+
+			ServerSocket serv;
 			String portString = System.getProperty("port");
 			int port = 8888;
 
@@ -66,11 +65,14 @@ public class SockServer {
 					System.out.println("- Got a start");
 				
 					response.put("type","hello" );
-					response.put("value","Hello, please tell me your name." );
+					response.put("value","Hello, Please start by telling me your name in the text box above." );
 					sendImg("img/hi.png", response); // calling a method that will manipulate the image and will make it send ready
 					
-				}
-				else {
+				} else if (json.getString("type").equals("hiBack")) {
+					name = json.getString("name");
+					response.put("type", "hiBack");
+					response.put("value", "Howzit, " + name + "!!\n" + "Let's go ahead and start the game!!");
+				} else {
 					System.out.println("not sure what you meant");
 					response.put("type","error" );
 					response.put("message","unknown response" );

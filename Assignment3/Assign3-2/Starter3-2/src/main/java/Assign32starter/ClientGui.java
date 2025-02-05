@@ -47,7 +47,6 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 	ObjectOutputStream os;
 	BufferedReader bufferedReader;
 
-	// TODO: SHOULD NOT BE HARDCODED change to spec
 	String host = "localhost";
 	int port = 8888;
 
@@ -144,7 +143,7 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 			// insert the image
 			if (picPanel.insertImage(filename, row, col)) {
 				// put status in output
-				outputPanel.appendOutput("Inserting " + filename + " in position (" + row + ", " + col + ")"); // you can of course remove this
+				outputPanel.appendOutput("Inserting " + filename + " in position (" + row + ", " + col + ")");
 				return true;
 			}
 			error = "File(\"" + filename + "\") not found.";
@@ -165,31 +164,46 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 	@Override
 	public void submitClicked() {
 		try {
-		open(); // opening a server connection again
-		System.out.println("submit clicked ");
+			open(); // opening a server connection again
+			System.out.println("submit clicked ");
 
-		// Pulls the input box text
-		String input = outputPanel.getInputText();
+			// Pulls the input box text
+			String input = outputPanel.getInputText();
+			JSONObject json = new JSONObject();
 
-		// TODO evaluate the input from above and create a request for client. 
+			// User Response for providing name.
+			if (currentMess.equals("{'type': 'start'}")) {
+				json.put("type", "hiBack");
+				json.put("name", input);
+				currentMess = "{'type': 'hiBack'}";
+			} else {
+				json.put("type", "guess");
+				json.put("guess", input);
+			}
+			// send request to server
+			try {
+			  	os.writeObject(json.toString());
+			 	 os.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
-		// send request to server
-		try {
-			  os.writeObject("Blub"); // this will crash the server, since it is not a JSON and thus the server will not handle it. 
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			// wait for an answer and handle accordingly
+			try {
+				System.out.println("Waiting on response");
+				String string = this.bufferedReader.readLine();
+				JSONObject res = new JSONObject(string);
+				System.out.println("What was received from server: " + string);
+
+				if (res.getString("type").equals("hiBack")) {
+					outputPanel.appendOutput(res.getString("value"));
+				}
+
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
-		// wait for an answer and handle accordingly
-		try {
-			System.out.println("Waiting on response");
-			String string = this.bufferedReader.readLine();
-			System.out.println(string);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		close();
+			close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
