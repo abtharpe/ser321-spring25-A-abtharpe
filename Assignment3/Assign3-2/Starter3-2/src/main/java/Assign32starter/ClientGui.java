@@ -100,7 +100,7 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 		outputPanel.appendOutput(json.getString("value")); // putting the message in the outputpanel
 
 		// reading out the image (abstracted here as just a string)
-		System.out.println("Pretend I got an image: " + json.getString("image"));
+		//System.out.println("Pretend I got an image: " + json.getString("image"));
 		/// would put image in picture panel
 		close(); //closing the connection to server
 
@@ -143,7 +143,7 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 			// insert the image
 			if (picPanel.insertImage(filename, row, col)) {
 				// put status in output
-				outputPanel.appendOutput("Inserting " + filename + " in position (" + row + ", " + col + ")");
+				//outputPanel.appendOutput("Inserting " + filename + " in position (" + row + ", " + col + ")");
 				return true;
 			}
 			error = "File(\"" + filename + "\") not found.";
@@ -180,9 +180,16 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 
 			} else if (currentMess.equals("{'type': 'hiBack'}")){
 
-				json.put("type", "playing");
-				json.put("guess", input);
-				currentMess = "{'type': 'playing'}";
+				json.put("type", "menu");
+				json.put("menuSelect", input);
+
+				if (input.equals("1")) {
+					currentMess = "{'type': 'leaderboard'}";
+				} else if (input.equals("2")) {
+					currentMess = "{'type': 'playing'}";
+				} else if (input.equals("3")) {
+					currentMess = "{'type': 'exit'}";
+				}
 
 			} else if (currentMess.equals("{'type': 'playing'}")) {
 
@@ -208,15 +215,33 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 				System.out.println("What was received from server: " + string);
 
 				if (res.getString("type").equals("hiBack")) {
+
+					//System.out.println("Image received: " + res.getString("imageName"));
 					outputPanel.appendOutput(res.getString("value"));
+
+				} else if (res.getString("type").equals("leaderboard")) {
+
 				} else if (res.getString("type").equals("playing")) {
-					outputPanel.appendOutput("Your guess was: " + res.getString("value"));
-					//Need to add logic on server side to determine if guess was correct and then handle the response here on the client side
+
+					outputPanel.clearOutput();
+					outputPanel.appendOutput(res.getString("value"));
+					try {
+						outputPanel.setPoints(res.getInt("score"));
+					} catch (JSONException e) {
+
+					}
+					insertImage(res.getString("imageName"), 0, 0);
+
+				} else if (res.getString("type").equals("exit")) {
+
+					System.exit(0);
+
 				}
 
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
+			outputPanel.setInputText("");
 			close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

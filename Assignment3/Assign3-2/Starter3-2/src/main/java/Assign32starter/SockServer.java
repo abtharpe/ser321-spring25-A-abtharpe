@@ -13,6 +13,7 @@ import java.io.*;
 import org.json.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Random;
 
 
 /**
@@ -22,7 +23,23 @@ import java.nio.file.Paths;
 public class SockServer {
 	static Stack<String> imageSource = new Stack<String>();
 
+	static private String[] images = {
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\Colosseum1.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\Colosseum2.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\Colosseum3.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\Colosseum4.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\GrandCanyon1.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\GrandCanyon2.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\GrandCanyon3.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\GrandCanyon4.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\Stonehenge1.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\Stonehenge3.png",
+			"C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\Stonehenge4.png",};
+
+
 	public static void main (String args[]) {
+		Random random = new Random();
+		int randomNum = 11;
 		Socket sock;
 		try {
 
@@ -68,20 +85,98 @@ public class SockServer {
 				
 					response.put("type","hello" );
 					response.put("value","Hello, Please start by telling me your name in the text box above." );
-					response = sendImg("img/hi.png", response); // calling a method that will manipulate the image and will make it send ready
 					
 				} else if (json.getString("type").equals("hiBack")) {
 
+					System.out.println("- Got a User Name");
+
 					name = json.getString("name");
 					response.put("type", "hiBack");
-					response.put("value", "Howzit, " + name + "!!\n" + "Let's go ahead and start the game!!\n" +
-							"You will have to try and guess what the location is for the photo bieng displayed.\n" +
-							"Please enter the number for the location you believe to be correct: \n" +
-							"1 - England\n 2 - Italy\n 3 - United States");
+					response.put("value", "Howzit, " + name + "!!\n" +
+							"Please enter a number for one of the menu options below: \n" +
+							"1 - See leaderboard\n" +
+							"2 - Play the game\n" +
+							"3 - Exit game");
+
+				} else if (json.getString("type").equals("menu")) {
+
+					String menuSelect = json.getString("menuSelect");
+
+					if (menuSelect.equals("1")) {
+
+						System.out.println("- Got a User menu selection of 1 - See Leaderboard");
+
+						response.put("type", "leaderboard");
+
+					} else if (menuSelect.equals("2")) {
+
+						System.out.println("- Got a User menu selection of 2 - Play the game");
+
+						response.put("type", "playing");
+						response.put("value",
+								"Let's go ahead and start the game!!\n" +
+										"You will have to try and guess what the location is for the photo bieng displayed.\n" +
+										"Please enter the number for the location you believe to be correct: \n" +
+										"1 - England\n 2 - Italy\n 3 - United States");
+
+						randomNum = random.nextInt(11);
+						response.put("imageName", images[randomNum]);
+
+					} else if (menuSelect.equals("3")) {
+
+						System.out.println("- Got a User menu selection of 3 - Exit game");
+
+						response.put("type", "exit");
+
+					} else {
+
+						response.put("type", "Hi");
+
+					}
 
 				} else if (json.getString("type").equals("playing")) {
+
+					System.out.println("- User is playing game");
+
 					//Logic for evaluating a user guess
 					String guess = json.getString("guess");
+
+					if (guess.equals("1") && 8 <= randomNum && randomNum <= 10) {
+						//correct guess
+						points++;
+						response.put("type", "playing");
+						response.put("value", "That's Correct!!\n\nPlease enter the number for the location you believe to be correct: \n" +
+								"1 - England\n 2 - Italy\n 3 - United States");
+						randomNum = random.nextInt(11);
+						response.put("imageName", images[randomNum]);
+						response.put("score", points);
+					} else if (guess.equals("2") && 0 <= randomNum && randomNum <= 3) {
+						//correct guess
+						points++;
+						response.put("type", "playing");
+						response.put("value", "That's Correct!!\n\nPlease enter the number for the location you believe to be correct: \n" +
+								"1 - England\n 2 - Italy\n 3 - United States");
+						randomNum = random.nextInt(11);
+						response.put("imageName", images[randomNum]);
+						response.put("score", points);
+					} else if (guess.equals("3") && 4 <= randomNum && randomNum <= 7) {
+						//correct guess
+						points++;
+						response.put("type", "playing");
+						response.put("value", "That's Correct!!\n\nPlease enter the number for the location you believe to be correct: \n" +
+								"1 - England\n 2 - Italy\n 3 - United States");
+						randomNum = random.nextInt(11);
+						response.put("imageName", images[randomNum]);
+						response.put("score", points);
+					} else {
+						//incorrect guess
+						response.put("type", "playing");
+						response.put("value", "That is not correct):\n\nPlease enter the number for the location you believe to be correct: \n" +
+								"1 - England\n 2 - Italy\n 3 - United States");
+						randomNum = random.nextInt(11);
+						response.put("imageName", images[randomNum]);
+					}
+
 				} else {
 
 					System.out.println("not sure what you meant");
@@ -106,7 +201,7 @@ public class SockServer {
 			// I read in the image and translated it into basically into a string and send it back to the client where I then decoded again
 			byte[] imageBytes = Files.readAllBytes(Paths.get(filename));
 			String image = Base64.getEncoder().encodeToString(imageBytes);
-			obj.put("image", "temp message");
+			obj.put("image", image);
 		} 
 		return obj;
 	}

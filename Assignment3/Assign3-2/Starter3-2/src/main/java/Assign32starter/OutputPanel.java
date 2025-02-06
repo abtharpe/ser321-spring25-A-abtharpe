@@ -171,4 +171,12 @@ public class OutputPanel extends JPanel {
   public void appendOutput(String message) {
     area.append(message + "\n");
   }
+
+  /**
+   * Clear text area of the output panel
+   * @param null
+   */
+  public void clearOutput() {
+    area.setText("");
+  }
 }
