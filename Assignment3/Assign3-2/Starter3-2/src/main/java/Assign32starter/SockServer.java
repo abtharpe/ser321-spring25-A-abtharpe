@@ -11,6 +11,8 @@ import javax.swing.ImageIcon;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import org.json.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 
 /**
@@ -66,16 +68,26 @@ public class SockServer {
 				
 					response.put("type","hello" );
 					response.put("value","Hello, Please start by telling me your name in the text box above." );
-					sendImg("img/hi.png", response); // calling a method that will manipulate the image and will make it send ready
+					response = sendImg("img/hi.png", response); // calling a method that will manipulate the image and will make it send ready
 					
 				} else if (json.getString("type").equals("hiBack")) {
+
 					name = json.getString("name");
 					response.put("type", "hiBack");
-					response.put("value", "Howzit, " + name + "!!\n" + "Let's go ahead and start the game!!");
+					response.put("value", "Howzit, " + name + "!!\n" + "Let's go ahead and start the game!!\n" +
+							"You will have to try and guess what the location is for the photo bieng displayed.\n" +
+							"Please enter the number for the location you believe to be correct: \n" +
+							"1 - England\n 2 - Italy\n 3 - United States");
+
+				} else if (json.getString("type").equals("playing")) {
+					//Logic for evaluating a user guess
+					String guess = json.getString("guess");
 				} else {
+
 					System.out.println("not sure what you meant");
 					response.put("type","error" );
 					response.put("message","unknown response" );
+
 				}
 				PrintWriter outWrite = new PrintWriter(sock.getOutputStream(), true); // using a PrintWriter here, you could also use and ObjectOutputStream or anything you fancy
 				outWrite.println(response.toString());
@@ -92,7 +104,9 @@ public class SockServer {
 			// import image
 			// I did not use the Advanced Custom protocol
 			// I read in the image and translated it into basically into a string and send it back to the client where I then decoded again
-			obj.put("image", "Pretend I am this image: " + filename);
+			byte[] imageBytes = Files.readAllBytes(Paths.get(filename));
+			String image = Base64.getEncoder().encodeToString(imageBytes);
+			obj.put("image", "temp message");
 		} 
 		return obj;
 	}

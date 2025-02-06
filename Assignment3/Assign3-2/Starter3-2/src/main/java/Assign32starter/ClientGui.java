@@ -84,7 +84,7 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 		frame.add(outputPanel, c);
 
 		picPanel.newGame(1);
-		insertImage("img/Colosseum1.png", 0, 0);
+		insertImage("C:\\Users\\Brock Tharpe\\IdeaProjects\\ser321-spring25-A-abtharpe\\Assignment3\\Assign3-2\\Starter3-2\\img\\hi.png", 0, 0);
 
 		open(); // opening server connection here
 		currentMess = "{'type': 'start'}"; // very initial start message for the connection
@@ -173,13 +173,24 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 
 			// User Response for providing name.
 			if (currentMess.equals("{'type': 'start'}")) {
+
 				json.put("type", "hiBack");
 				json.put("name", input);
 				currentMess = "{'type': 'hiBack'}";
-			} else {
-				json.put("type", "guess");
+
+			} else if (currentMess.equals("{'type': 'hiBack'}")){
+
+				json.put("type", "playing");
 				json.put("guess", input);
+				currentMess = "{'type': 'playing'}";
+
+			} else if (currentMess.equals("{'type': 'playing'}")) {
+
+				json.put("type", "playing");
+				json.put("guess", input);
+
 			}
+
 			// send request to server
 			try {
 			  	os.writeObject(json.toString());
@@ -198,6 +209,9 @@ public class ClientGui implements Assign32starter.OutputPanel.EventHandlers {
 
 				if (res.getString("type").equals("hiBack")) {
 					outputPanel.appendOutput(res.getString("value"));
+				} else if (res.getString("type").equals("playing")) {
+					outputPanel.appendOutput("Your guess was: " + res.getString("value"));
+					//Need to add logic on server side to determine if guess was correct and then handle the response here on the client side
 				}
 
 			} catch (Exception e) {
