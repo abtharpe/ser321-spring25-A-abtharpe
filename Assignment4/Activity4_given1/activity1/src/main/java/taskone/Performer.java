@@ -44,6 +44,15 @@ class Performer {
         return json;
     }
 
+    public JSONObject quit() throws InterruptedException {
+        System.out.println("Client has quit the connection");
+        JSONObject json = new JSONObject();
+        json.put("datatype", 0);
+        json.put("type", "quit");
+        json.put("data", "Client Quit");
+        return json;
+    }
+
     public static JSONObject error(String err) {
         JSONObject json = new JSONObject();
         json.put("error", err);

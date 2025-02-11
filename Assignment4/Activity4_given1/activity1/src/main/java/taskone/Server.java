@@ -72,6 +72,10 @@ class Server {
                         String inStr = (String) message.get("data");
                         returnMessage = performer.add(inStr);
                         break;
+                    case (0):
+                        returnMessage = performer.quit();
+
+                        break;
                     default:
                         returnMessage = performer.error("Invalid selection: " + choice
                                 + " is not an option");
