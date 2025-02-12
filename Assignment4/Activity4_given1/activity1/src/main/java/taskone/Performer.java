@@ -44,7 +44,18 @@ class Performer {
         return json;
     }
 
-    public JSONObject quit() throws InterruptedException {
+    public JSONObject display() throws InterruptedException {
+        System.out.println("Start display");
+        JSONObject json = new JSONObject();
+        json.put("datatype", 2);
+        json.put("type", "display");
+        sleep(6000); // IDK, seems like the cool kids take an extra 6 seconds
+        json.put("data", state.toString());
+        System.out.println("end display");
+        return json;
+    }
+
+    public JSONObject quit() {
         System.out.println("Client has quit the connection");
         JSONObject json = new JSONObject();
         json.put("datatype", 0);
