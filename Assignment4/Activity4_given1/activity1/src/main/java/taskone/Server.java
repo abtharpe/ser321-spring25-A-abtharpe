@@ -75,6 +75,9 @@ class Server {
                     case (2):
                         returnMessage = performer.display();
                         break;
+                    case (3):
+                        returnMessage = performer.count();
+                        break;
                     case (0):
                         returnMessage = performer.quit();
                         break;

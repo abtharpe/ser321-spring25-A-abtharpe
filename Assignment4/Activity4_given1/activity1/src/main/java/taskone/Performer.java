@@ -55,6 +55,17 @@ class Performer {
         return json;
     }
 
+    public JSONObject count() throws InterruptedException {
+        System.out.println("Start count");
+        JSONObject json = new JSONObject();
+        json.put("datatype", 3);
+        json.put("type", "count");
+        sleep(4000); // ): my mom said I can only wait 4 seconds
+        json.put("data", String.valueOf(state.size()));
+        System.out.println("end count");
+        return json;
+    }
+
     public JSONObject quit() {
         System.out.println("Client has quit the connection");
         JSONObject json = new JSONObject();
