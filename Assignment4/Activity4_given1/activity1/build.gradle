@@ -42,3 +42,18 @@ task runClient(type: JavaExec) {
   }
 }
 
+task runThreadedServer(type: JavaExec) {
+  group 'threadedServer'
+  description 'Creates Threaded Server socket waits for messages'
+
+  classpath = sourceSets.main.runtimeClasspath
+
+  main = 'taskone.ThreadedServer'
+  standardInput = System.in
+
+  // run with arguments e.g.: gradle runThreadedServer -Pport=9099 -q --console=plain
+  if (project.hasProperty('port')) {
+    args(project.getProperty('port'));
+  }
+}
+
